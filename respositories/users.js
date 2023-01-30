@@ -1,6 +1,9 @@
 const { json } = require('express');
 const fs = require('fs');
 const crypto = require('crypto');
+const util = require('util')
+
+const scrypt = util.promisify (crypto.scrypt)
 
 class UserRepository{
    constructor(filename){ // constructor này mỗi khi gọi mới phải định nghĩa 
@@ -39,13 +42,29 @@ class UserRepository{
         attrs.id = this.randomId();
 
         const salt =crypto.randomBytes(8).toString('hex');
+       const buf = await scrypt(attrs.password, salt, 64)   //sử dụng await vì cần phải đợi hàm dk băm ra nữa.
+
 
         const records = await this.getAll();  //lay data trong file json hien 
         // tại dưới dạng mảng rồi push thêm data mới vào cuối của mảng rồi updat lại vào filename.json
-        records.push(attrs);
+
+        const record = {...attrs,
+            password:  `${buf.toString('hex')}.${salt}`,
+        }
+        records.push(record);
         await this.writeAll(records) // chay 1 ham writeAll rieng để upload data len file
         return attrs;
     }
+
+    async comparePassword(saved, supplied){
+   //save -> dữ liệu mật khẩu đã lưu ở file users.json dưới dạng 'asbc.xyz'
+   // supplied la mat khau do user nhập vào để đăng nhập.
+     const [hashed, salt] = saved.split('.')  //tajo array phân tách pass và salt
+     const hashedSuppliedBuf = await scrypt(supplied, salt,64)
+
+     return hashed === hashedSuppliedBuf.toString('hex') ;
+    }
+
 
     async writeAll(records){
         await fs.promises.writeFile(this.filename, JSON.stringify(records,null,2))

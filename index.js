@@ -82,11 +82,17 @@ app.post('/signin',async (req,res)=>{
    if(!user){
     return res.send('Email không tồn tại');
    }
-
-   if(user.password !== password){
+   
+   const validPassword = await usersRepo.comparePassword(
+    user.password,
+    password
+   )
+   if(!validPassword){
      return res.send('Sai mật khẩu');
    }
 
+   //neu cac dieu kiejn treen cos 1 cai sai nó sẽ chạy return để kết thúc function chứ
+  //  không chạy tiếp xuống để tạo req.session.
    req.session.useId = user.id  //sau khi đăng nhập thành công sẽ tiến hành tại phiên làm
    //việc đầu tiên. 
    res.send('Đăng nhập thành công. Cookie bắt đầu có tác dụng');
