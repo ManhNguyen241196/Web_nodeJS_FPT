@@ -1,7 +1,13 @@
 const express = require('express');
+const {check, validationResult} = require('express-validator');
+
+
 const usersRepo = require('../../respositories/users');
 const signupTemplate = require('../../views/admin/auth/signup');
 const signinTemplate = require ('../../views/admin/auth/signin')
+
+const test = require('./validators')
+
 
 const router = express.Router();
 
@@ -9,18 +15,22 @@ router.get('/signup', (req,res)=>{
     res.send(signupTemplate({req}));
 });
 
-router.post('/signup',async (req,res)=>{ // đăng kí tài khoản
+router.post('/signup',   //xen 1 middleware để validator form vao trước khi post data từ form lên server
+ [
+    // requireEmail,
+    // requirePassword,
+    // requirePasswordConfirmation,
+    test.test2,
+    test.test1,
+    test.test3
+   
+ ],
+ async (req,res)=>{ // đăng kí tài khoản
+    console.clear()
+    const errors = validationResult(req)
+    console.log(errors)
+
    const {email, password, passwordConfirmation} =req.body;
-
-   const existingUser = await usersRepo.getOneBy({email});
-    if(existingUser){
-        return res.send('Email in use')
-    }
-
-    if (password !== passwordConfirmation) {
-        return res.send(' passwordConfirmation not match')
-        
-    }
 
     //creat user in repo
     const user = await usersRepo.create({email: email, password:password})
