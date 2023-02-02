@@ -5,6 +5,7 @@ module.exports = {
     test1: check('email').trim()
      .normalizeEmail()
      .isEmail()
+     .withMessage('Must be a valid email')
      .custom(async (value)=>{
        const existingUser = await usersRepo.getOneBy({email: value});
        if(existingUser){
@@ -14,15 +15,18 @@ module.exports = {
      }),
 
     test2: check('password').trim()
-     .isLength({min:4 , max: 16}),
-
-    test3: check('passwordConfirmation').trim()
      .isLength({min:4 , max: 16})
-     .custom((passwordConfirmation,{req})=>{
-        if (passwordConfirmation !== req.body.password) {
-            throw new Error('Password khong trung khop')
-        }
-     }),
+     .withMessage('password phải từ 4 -16 ki tu'),
 
-    
+    checkpassConfirms: check('passwordConfirmation').trim()
+    .isLength({min:4 , max: 16})
+    .withMessage('password phải từ 4 -16 ki tu')
+    .custom((passwordConfirmation, {req}) => {
+      if (passwordConfirmation !== req.body.password) {
+        throw new Error('Passwords must match');
+      }else{
+          return true;
+        
+      }
+    }),
 }
