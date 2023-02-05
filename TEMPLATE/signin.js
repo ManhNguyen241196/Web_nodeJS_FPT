@@ -1,21 +1,14 @@
-const layout = require('../layout')
+const layout = require('../layout');
+const { getError } = require('../../helpers');
 
-const getError = (errors, prop)=>{
-   try {
-    return errors.mapped()[prop].msg   //[prop] chính là các gọi biến đóng vai trò là key trong 1 object  
-   } catch (error) {
-     return ''
-   }  
-}
-
-module.exports=({req, errors}) =>{
-    return layout({content: 
-        `
+module.exports = ({ errors }) => {
+  return layout({
+    content: `
       <div class="container">
         <div class="columns is-centered">
           <div class="column is-one-quarter">
             <form method="POST">
-              <h1 class="title">Sign Up</h1>
+              <h1 class="title">Sign in</h1>
               <div class="field">
                 <label class="label">Email</label>
                 <input required class="input" placeholder="Email" name="email" />
@@ -26,20 +19,12 @@ module.exports=({req, errors}) =>{
                 <input required class="input" placeholder="Password" name="password" type="password" />
                 <p class="help is-danger">${getError(errors, 'password')}</p>
               </div>
-              <div class="field">
-                <label class="label">Password Confirmation</label>
-                <input required class="input" placeholder="Password Confirmation" name="passwordConfirmation" type="password" />
-                <p class="help is-danger">${getError(
-                  errors,
-                  'passwordConfirmation'
-                )}</p>
-              </div>
               <button class="button is-primary">Submit</button>
             </form>
-            <a href="/signin">Have an account? Sign In</a>
+            <a href="/signup">Need an account? Sign Up</a>
           </div>
         </div>
       </div>
     `
-     })
-}
+  });
+};

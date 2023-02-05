@@ -1,16 +1,9 @@
-const layout = require('../layout')
+const layout = require('../layout');
+const { getError } = require('../../helpers');
 
-const getError = (errors, prop)=>{
-   try {
-    return errors.mapped()[prop].msg   //[prop] chính là các gọi biến đóng vai trò là key trong 1 object  
-   } catch (error) {
-     return ''
-   }  
-}
-
-module.exports=({req, errors}) =>{
-    return layout({content: 
-        `
+module.exports = ({ req, errors }) => {
+  return layout({
+    content: `
       <div class="container">
         <div class="columns is-centered">
           <div class="column is-one-quarter">
@@ -41,5 +34,5 @@ module.exports=({req, errors}) =>{
         </div>
       </div>
     `
-     })
-}
+  });
+};
