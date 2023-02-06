@@ -97,8 +97,7 @@ router.post('/signin',
   //  không chạy tiếp xuống để tạo req.session.
    req.session.useId = user.id  //sau khi đăng nhập thành công sẽ tiến hành tại phiên làm
    //việc đầu tiên. 
-   res.send('Đăng nhập thành công. Cookie bắt đầu có tác dụng');
-
+   res.redirect('/admin/products');
 })
 
 router.get('/',(req,res)=>{
