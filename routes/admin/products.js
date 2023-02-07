@@ -11,6 +11,7 @@ const {handleErrors, requireAuth} = require('./middleware');
 const productsRepo = require('../../respositories/products');
 const productNewTemplate = require('../../views/admin/products/new')
 const productsIndexTemplate = require('../../views/admin/products/index')
+const productEditTeamplate = require('../../views/admin/products/edit')
 
 const router = express.Router();
 const upload = multer({storage: multer.memoryStorage()})
@@ -18,7 +19,7 @@ const upload = multer({storage: multer.memoryStorage()})
 router.get('/admin/products',requireAuth ,async (req,res)=>{
   
   const products = await productsRepo.getAll();
-  console.log(products)
+  // console.log(products)
   res.send(productsIndexTemplate(products))
 })
 
@@ -47,7 +48,7 @@ async (req,res)=>{ // đăng kí tài khoản
   
   const {title, price }  = req.body;
   const image = req.file.buffer.toString('base64')
-  console.dir( productsRepo.create)
+  // console.dir( productsRepo.create)
   await productsRepo.create({title, price, image})
 
   console.log('data gui len server la: ', req.body, req.file.buffer);
@@ -56,6 +57,47 @@ async (req,res)=>{ // đăng kí tài khoản
   res.redirect('/admin/products')
   
 }
-),
+)
+
+router.get('/admin/products/:id/edit', requireAuth,async (req,res)=>{
+  const product =await productsRepo.getOne(req.params.id)
+  if (!product) {
+    res.send('san pham khong ton tai')
+  }else{
+    res.send(productEditTeamplate({product}))
+  }
+})
+
+router.post('/admin/products/:id/edit',
+  requireAuth,
+ upload.single('image') ,
+  [       //  middleware  này để xác thực
+    test.requireTitle,
+    test.requirePrice
+  ]
+  ,
+  handleErrors(productNewTemplate),
+
+  async (req,res)=>{
+    const changes  = req.body;
+    if(req.file){
+      changes.image = req.file.buffer.toString('base64');
+    }
+    try {
+     await productsRepo.update(req.params.id, changes)
+    } catch (error) {
+      return res.send('<h1> Không tìm thấy sản phẩm để sửa </h1>');
+    }
+
+  res.redirect('/admin/products')
+
+})
+
+router.post('/admin/products/:id/delete', requireAuth, async (req,res)=>{
+  await productsRepo.delete(req.params.id);
+  res.redirect('/admin/products')
+
+})
+
 
 module.exports = router;

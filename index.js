@@ -4,7 +4,8 @@ const usersRepo = require('./respositories/users')
 
 const cookieSession = require('cookie-session')
 const authRouter = require('./routes/admin/auth')
-const productsRouter = require('./routes/admin/products')
+const productsAdminRouter = require('./routes/admin/products')
+const productsRouter = require('./routes/client/products')
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(cookieSession({
 }))
 
 app.use(authRouter)
+app.use(productsAdminRouter)
 app.use(productsRouter)
 
 
