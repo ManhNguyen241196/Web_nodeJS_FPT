@@ -1,9 +1,12 @@
 const express = require('express');
+const productsRepo  = require('../../respositories/products');
+const productsIndexTemplate =require('../../views/admin/products/client/index')
 
 const router = express.Router();
 
-router.get('/home/products', (req,res)=>{
-    res.send("dkm co len");
+router.get('/', async (req,res)=>{
+    const products = await productsRepo.getAll()
+    res.send(productsIndexTemplate({products}));
 });
 
 

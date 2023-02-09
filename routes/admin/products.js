@@ -51,7 +51,7 @@ async (req,res)=>{ // đăng kí tài khoản
   // console.dir( productsRepo.create)
   await productsRepo.create({title, price, image})
 
-  console.log('data gui len server la: ', req.body, req.file.buffer);
+  console.log('data gui len server la: ', req.body, req.file);
   // console.log(req.file.buffer.toString('base64'))
   
   res.redirect('/admin/products')

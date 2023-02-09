@@ -38,11 +38,9 @@ module.exports = class Repository{
     
         async create(attrs){    // attrs được đưa vào là 1 object 
             attrs.id = this.randomId();
-
             const records = await this.getAll();  // records được xây dựng là 1 array
             records.push(attrs);
             await this.writeAll(records);
-
             return attrs
         }
     
