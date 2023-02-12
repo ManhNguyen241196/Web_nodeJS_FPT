@@ -32,30 +32,30 @@ router.get('/admin/products/new', requireAuth,(req,res)=>{
 
 // gui data tu form len server 
 router.post('/admin/products/new',
-upload.single('image')//  middleware  này để upload file . NẾu vupload thành công thì phía sau mới 
-//chạy dk tiếp. phương thức này được xem giữa route và function phía sau đóng vai trò là miadleware 
-//để xử lí các dạng dữ liệu để phục vụ cho việc upload ảnh lên . Bản thân nó vẫn
-// lấy dữ liệu từ input đó chỉ khác dữ liệu đưa vào đã được mã hóa.
-,
-  [       //  middleware  này để xác thực
-     test.requireTitle,
-     test.requirePrice
-  ]
-,
-  handleErrors(productNewTemplate)
-,
-async (req,res)=>{ // đăng kí tài khoản
-  
-  const {title, price }  = req.body;
-  const image = req.file.buffer.toString('base64')
-  // console.dir( productsRepo.create)
-  await productsRepo.create({title, price, image})
+  upload.single('image')//  middleware  này để upload file . NẾu vupload thành công thì phía sau mới 
+  //chạy dk tiếp. phương thức này được xem giữa route và function phía sau đóng vai trò là miadleware 
+  //để xử lí các dạng dữ liệu để phục vụ cho việc upload ảnh lên . Bản thân nó vẫn
+  // lấy dữ liệu từ input đó chỉ khác dữ liệu đưa vào đã được mã hóa.
+  ,
+    [       //  middleware  này để xác thực
+      test.requireTitle,
+      test.requirePrice
+    ]
+  ,
+    handleErrors(productNewTemplate)
+  ,
+  async (req,res)=>{ // đăng kí tài khoản
+    
+    const {title, price }  = req.body;
+    const image = req.file.buffer.toString('base64')  // save file ảnh dưới dạng mã base64
+    // console.dir( productsRepo.create)
+    await productsRepo.create({title, price, image})
 
-  console.log('data gui len server la: ', req.body, req.file);
-  // console.log(req.file.buffer.toString('base64'))
-  
-  res.redirect('/admin/products')
-  
+    console.log('data gui len server la: ', req.body, req.file);
+    // console.log(req.file.buffer.toString('base64'))
+    
+    res.redirect('/admin/products')
+    
 }
 )
 
